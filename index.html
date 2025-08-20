@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Hachi+Maru+Pop&family=Zen+Kaku+Gothic+New&family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
+
+    <!-- slick CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- slick JS -->
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <title>あっためチェッカー</title>
+  </head>
+  <body>
+    <div id="sound-modal" class="modal">
+      <div class="modal-content">
+        <p>🍔このサイトは音が出ます。再生してもいいですか？🍔</p>
+        <p>※後で設定を変えられます</p>
+        <button id="allow-sound">はい</button>
+        <button id="deny-sound">いいえ</button>
+      </div>
+    </div>
+    <div class="calculation-wrapper">
+      <div class="wrap">
+        <h1>あっためチェッカー</h1>
+        <audio id="bgm" src="./mp3/ks019.wav" loop>
+          <p>🍔この端末は、音声の再生に対応していません🍔</p>
+        </audio>
+        <div class="card">
+          <div class="range-flex-wrapper">
+            <div class="range-flex-left">
+              <div class="grid">
+                <div>
+                  <label>記載されているワット数 (W₁)</label>
+                  <input id="w1" type="number" inputmode="numeric" min="1" placeholder="例: 500" />
+                </div>
+                <div>
+                  <label>変換先ワット数 (W₂)</label>
+                  <input id="w2" type="number" inputmode="numeric" min="1" placeholder="例: 700" />
+                </div>
+                <div>
+                  <label>記載されている時間（分）</label>
+                  <input id="m1" type="number" inputmode="numeric" min="0" placeholder="例: 4" />
+                </div>
+                <div>
+                  <label>記載されている時間（秒）</label>
+                  <input id="s1" type="number" inputmode="numeric" min="0" max="59" placeholder="例: 10" />
+                </div>
+                <div>
+                  <label>端数の処理</label>
+                  <select id="rounding">
+                    <option value="exact">そのまま</option>
+                    <option value="nearest5">四捨五入（5秒単位）</option>
+                    <option value="short5">少し短め（例:3分02秒→3分00秒）</option>
+                    <option value="long5">少し長め（例:3分02秒→3分05秒）</option>
+                  </select>
+                </div>
+                <div>
+                  <label>秒数を足す</label>
+                  <input id="margin" type="number" inputmode="numeric" min="0" value="0" />
+                </div>
+              </div>
+              <button id="delete-label" class="secondary" title="入力内容をクリア">入力内容をクリア</button>
+              <div class="recipe-wrapper">
+                <label>保存したレシピ</label>
+                <div id="presets" class="presets"></div>
+              </div>
+            </div>
+            <div class="range-flex-right">
+              <div id="out" class="result"></div>
+              <div>
+                <div class="row">
+                  <button id="calc" class="calc">あたためる</button>
+                  <audio id="click-sound" preload="auto">
+                    <source src="./mp3/warmed-up.mp3" type="audio/mpeg" />
+                  </audio>
+                </div>
+              </div>
+              <div class="bottom-button">
+                <div>
+                  <button id="swap" class="secondary" title="W₁ と W₂ を入れ替え">W₁ ⇄ W₂</button>
+                  <button id="mute" class="secondary" title="ミュート">ミュート</button>
+                  <button id="save" class="secondary" title="レシピを保存">レシピを保存</button>
+                  <button id="delete" class="secondary" title="レシピを削除">レシピを削除</button>
+                </div>
+                <p>作り方：t₂ = (分×60 + 秒) × W₁ / W₂。<span class="br"></span>短めで様子見がオススメ！</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="inner">
+      <ul class="slider">
+        <li><img src="./img/food01.png" alt=""></li>
+        <li><img src="./img/food02.png" alt=""></li>
+        <li><img src="./img/food03.png" alt=""></li>
+        <li><img src="./img/food04.png" alt=""></li>
+        <li><img src="./img/food05.png" alt=""></li>
+        <li><img src="./img/food06.png" alt=""></li>
+        <li><img src="./img/food01.png" alt=""></li>
+        <li><img src="./img/food02.png" alt=""></li>
+        <li><img src="./img/food03.png" alt=""></li>
+        <li><img src="./img/food04.png" alt=""></li>
+        <li><img src="./img/food05.png" alt=""></li>
+        <li><img src="./img/food06.png" alt=""></li>
+      </ul> 
+    </div>
+    <footer>
+      <p>サイト内BGM</p>
+      <p>[配布元]<a href="https://yukizakura.net" target="_blank">創作堂さくら紅葉</a></p>
+    </footer>
+    <!-- レシピ削除モーダル -->
+    <div id="delete-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <p>削除するレシピを選んでください</p>
+        <div id="delete-list" class="delete-list" style="max-height:200px;overflow-y:auto;text-align:left;"></div>
+        <button id="delete-confirm">削除</button>
+        <button id="delete-cancel">キャンセル</button>
+      </div>
+    </div>
+
+    <!-- 確認モーダル -->
+    <div id="confirm-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <p>このレシピを消しても良いですか？</p>
+        <button id="confirm-yes">はい</button>
+        <button id="confirm-no">いいえ</button>
+      </div>
+    </div>
+
+    <!-- 削除完了メッセージ -->
+    <div id="delete-toast" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:#ff6f91;color:#fff;padding:10px 20px;border-radius:8px;z-index:9999;font-family:'Hachi Maru Pop',cursive;">
+      削除しました！
+    </div>
+    <script src="./js/script.js"></script>
+  </body>
+</html>
