@@ -56,12 +56,14 @@
                 </div>
                 <div>
                   <label>端数の処理</label>
-                  <select id="rounding">
-                    <option value="exact">そのまま</option>
-                    <option value="nearest5">四捨五入（5秒単位）</option>
-                    <option value="short5">少し短め（例:3分02秒→3分00秒）</option>
-                    <option value="long5">少し長め（例:3分02秒→3分05秒）</option>
-                  </select>
+                  <div class="select-box">
+                    <select id="rounding">
+                      <option value="exact">そのまま</option>
+                      <option value="nearest5">四捨五入（5秒単位）</option>
+                      <option value="short5">少し短め（例:3分02秒→3分00秒）</option>
+                      <option value="long5">少し長め（例:3分02秒→3分05秒）</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <label>秒数を足す</label>
