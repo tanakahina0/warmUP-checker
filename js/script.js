@@ -261,3 +261,6 @@ function showToast(msg) {
     toast.style.display = "none";
   }, 2000);
 }
+
+const audio = document.getElementById("bgm");
+audio.volume = 0.5;
