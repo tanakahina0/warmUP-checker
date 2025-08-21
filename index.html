@@ -9,14 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Hachi+Maru+Pop&family=Zen+Kaku+Gothic+New&family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
-
-    <!-- slick CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-
-    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- slick JS -->
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <title>あっためチェッカー</title>
   </head>
@@ -32,7 +26,7 @@
     <div class="calculation-wrapper">
       <div class="wrap">
         <h1>あっためチェッカー</h1>
-        <audio id="bgm" src="./mp3/ks019.wav" loop>
+        <audio id="bgm" src="./mp3/ks019.mp3" loop>
           <p>🍔この端末は、音声の再生に対応していません🍔</p>
         </audio>
         <div class="card">
@@ -121,6 +115,16 @@
       <p>サイト内BGM</p>
       <p>[配布元]<a href="https://yukizakura.net" target="_blank">創作堂さくら紅葉</a></p>
     </footer>
+    <div id="save-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <p>レシピ名を入力してください</p>
+        <input id="save-name" type="text" placeholder="例：500W→700W 4分10秒" style="width:100%;padding:8px;margin:10px 0;">
+        <div>
+          <button id="save-confirm">保存</button>
+          <button id="save-cancel">キャンセル</button>
+        </div>
+      </div>
+    </div>
     <!-- レシピ削除モーダル -->
     <div id="delete-modal" class="modal" style="display:none;">
       <div class="modal-content">
@@ -141,11 +145,9 @@
     </div>
 
     <!-- 削除完了メッセージ -->
-    <div id="delete-toast" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-    background:#ff6f91;color:#fff;padding:10px 20px;border-radius:8px;z-index:9999;font-family:'Hachi Maru Pop',cursive;">
+    <div id="delete-toast" class="toast">
       削除しました！
     </div>
     <script src="./js/script.js"></script>
   </body>
 </html>
-
