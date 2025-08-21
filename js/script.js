@@ -71,6 +71,26 @@ function loadPresets(){
   } catch(e){ renderPresets([]); }
 }
 
+// function savePreset(){
+//   const w1 = Number($('w1').value);
+//   const w2 = Number($('w2').value);
+//   const m1 = Number($('m1').value||0);
+//   const s1 = Number($('s1').value||0);
+//   const rounding = $('rounding').value;
+//   const margin = Number($('margin').value||0);
+//   if(!w1 || !w2 || (m1===0 && s1===0)) return alert('保存前に数値を入力してね。');
+//   const label = prompt('レシピ名（例：500W→700W 4分10秒）', `${w1}W→${w2}W ${m1}分${pad(s1)}秒`);
+//   if(label === null) return;
+//   const item = {label, w1, w2, m1, s1, rounding, margin, ts: Date.now()};
+//   let arr = [];
+//   try { arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){}
+//   arr.unshift(item);
+//   // 直近20件まで
+//   arr = arr.slice(0, 20);
+//   localStorage.setItem(LS_KEY, JSON.stringify(arr));
+//   renderPresets(arr);
+// }
+
 function savePreset(){
   const w1 = Number($('w1').value);
   const w2 = Number($('w2').value);
@@ -78,18 +98,39 @@ function savePreset(){
   const s1 = Number($('s1').value||0);
   const rounding = $('rounding').value;
   const margin = Number($('margin').value||0);
-  if(!w1 || !w2 || (m1===0 && s1===0)) return alert('保存前に数値を入力してね。');
-  const label = prompt('レシピ名（例：500W→700W 4分10秒）', `${w1}W→${w2}W ${m1}分${pad(s1)}秒`);
-  if(label === null) return;
-  const item = {label, w1, w2, m1, s1, rounding, margin, ts: Date.now()};
-  let arr = [];
-  try { arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){}
-  arr.unshift(item);
-  // 直近20件まで
-  arr = arr.slice(0, 20);
-  localStorage.setItem(LS_KEY, JSON.stringify(arr));
-  renderPresets(arr);
+
+  if(!w1 || !w2 || (m1===0 && s1===0)){
+    showToast("保存前に数値を入力してね。");
+    return;
+  }
+
+  // デフォルト名を入力欄に入れる
+  $("save-name").value = `${w1}W→${w2}W ${m1}分${pad(s1)}秒`;
+  $("save-modal").style.display = "flex";
+
+  // 保存確定
+  $("save-confirm").onclick = () => {
+    const label = $("save-name").value.trim();
+    if(!label){
+      alert("レシピ名を入力してください");
+      return;
+    }
+    const item = {label, w1, w2, m1, s1, rounding, margin, ts: Date.now()};
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){}
+    arr.unshift(item);
+    arr = arr.slice(0, 20); // 最大20件
+    localStorage.setItem(LS_KEY, JSON.stringify(arr));
+    renderPresets(arr);
+    $("save-modal").style.display = "none";
+  };
+
+  // キャンセル
+  $("save-cancel").onclick = () => {
+    $("save-modal").style.display = "none";
+  };
 }
+
 
 function renderPresets(arr){
   const box = $('presets');
@@ -264,4 +305,3 @@ function showToast(msg) {
 
 const audio = document.getElementById("bgm");
 audio.volume = 0.3;
-
