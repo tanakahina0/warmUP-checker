@@ -263,4 +263,5 @@ function showToast(msg) {
 }
 
 const audio = document.getElementById("bgm");
-audio.volume = 0.5;
+audio.volume = 0.3;
+
