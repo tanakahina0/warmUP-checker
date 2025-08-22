@@ -9,7 +9,7 @@ function toSeconds(m, s){
 
 function roundByMode(sec, mode){
   if(mode === 'exact'){
-    return Math.max(1, Math.ceil(sec)); // 小数が出たら切り上げて1秒は確保
+    return Math.max(1, Math.ceil(sec));
   }
   const step = 5;
   const base = Math.round(sec / step) * step;
@@ -66,71 +66,81 @@ const LS_KEY = 'mw-presets-v1';
 
 function loadPresets(){
   try {
-    const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const arrRaw = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const arr = arrRaw.map(item =>
+      typeof item === 'string' ? { label: item } : item
+    );
+    if (JSON.stringify(arr) !== JSON.stringify(arrRaw)) {
+      localStorage.setItem(LS_KEY, JSON.stringify(arr));
+    }
     renderPresets(arr);
   } catch(e){ renderPresets([]); }
 }
 
-// function savePreset(){
-//   const w1 = Number($('w1').value);
-//   const w2 = Number($('w2').value);
-//   const m1 = Number($('m1').value||0);
-//   const s1 = Number($('s1').value||0);
-//   const rounding = $('rounding').value;
-//   const margin = Number($('margin').value||0);
-//   if(!w1 || !w2 || (m1===0 && s1===0)) return alert('保存前に数値を入力してね。');
-//   const label = prompt('レシピ名（例：500W→700W 4分10秒）', `${w1}W→${w2}W ${m1}分${pad(s1)}秒`);
-//   if(label === null) return;
-//   const item = {label, w1, w2, m1, s1, rounding, margin, ts: Date.now()};
-//   let arr = [];
-//   try { arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){}
-//   arr.unshift(item);
-//   // 直近20件まで
-//   arr = arr.slice(0, 20);
-//   localStorage.setItem(LS_KEY, JSON.stringify(arr));
-//   renderPresets(arr);
-// }
-
 function savePreset(){
+  const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  if(arr.length >= 20){ // 上限チェック
+    $("save-limit-modal").style.display = "flex";
+    return;
+  }
+
   const w1 = Number($('w1').value);
   const w2 = Number($('w2').value);
   const m1 = Number($('m1').value||0);
   const s1 = Number($('s1').value||0);
-  const rounding = $('rounding').value;
-  const margin = Number($('margin').value||0);
 
   if(!w1 || !w2 || (m1===0 && s1===0)){
-    showToast("保存前に数値を入力してね。");
+    showToast("保存前に数値を入力してください");
     return;
   }
 
   // デフォルト名を入力欄に入れる
   $("save-name").value = `${w1}W→${w2}W ${m1}分${pad(s1)}秒`;
   $("save-modal").style.display = "flex";
-
-  // 保存確定
-  $("save-confirm").onclick = () => {
-    const label = $("save-name").value.trim();
-    if(!label){
-      alert("レシピ名を入力してください");
-      return;
-    }
-    const item = {label, w1, w2, m1, s1, rounding, margin, ts: Date.now()};
-    let arr = [];
-    try { arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){}
-    arr.unshift(item);
-    arr = arr.slice(0, 20); // 最大20件
-    localStorage.setItem(LS_KEY, JSON.stringify(arr));
-    renderPresets(arr);
-    $("save-modal").style.display = "none";
-  };
-
-  // キャンセル
-  $("save-cancel").onclick = () => {
-    $("save-modal").style.display = "none";
-  };
 }
 
+// 保存モーダルのボタン
+$("save-confirm").addEventListener("click", ()=>{
+  const name = $("save-name").value.trim();
+  if(!name) return;
+
+  const arrRaw = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  const arr = arrRaw.map(item =>
+    typeof item === 'string' ? { label: item } : item
+  );
+
+  const preset = {
+    label: name,
+    w1: Number($('w1').value),
+    w2: Number($('w2').value),
+    m1: Number($('m1').value||0),
+    s1: Number($('s1').value||0),
+    rounding: $('rounding').value,
+    margin: Number($('margin').value||0),
+  };
+
+  if (arr.length >= 20) {
+    $("save-modal").style.display = "none";
+    $("save-limit-modal").style.display = "flex";
+    return;
+  }
+
+  arr.unshift(preset);
+  localStorage.setItem(LS_KEY, JSON.stringify(arr));
+
+  $("save-modal").style.display = "none";
+  renderPresets(arr);
+  showToast("保存しました！");
+});
+
+$("save-cancel").addEventListener("click", ()=>{
+  $("save-modal").style.display = "none";
+});
+
+// 上限モーダルOKボタン
+$("save-limit-ok").addEventListener("click", ()=>{
+  $("save-limit-modal").style.display = "none";
+});
 
 function renderPresets(arr){
   const box = $('presets');
@@ -150,7 +160,7 @@ function renderPresets(arr){
   });
 }
 
-// --- サウンド管理 ---
+// サウンド管理
 let isMuted = true;
 
 function playClickSound() {
@@ -194,7 +204,7 @@ window.addEventListener("DOMContentLoaded", () => {
     isMuted = false;
     bgm.muted = false;
     click.muted = false;
-    $("mute").textContent = "ミュート"; // ← 「はい」でミュートボタンを「ミュート」に
+    $("mute").textContent = "ミュート";
     bgm.play().catch(err => console.warn("BGM再生失敗:", err));
     $("sound-modal").style.display = "none";
   });
@@ -202,7 +212,7 @@ window.addEventListener("DOMContentLoaded", () => {
     isMuted = true;
     bgm.muted = true;
     click.muted = true;
-    $("mute").textContent = "ミュート解除"; // ← 「いいえ」でミュートボタンを「ミュート解除」に
+    $("mute").textContent = "ミュート解除";
     $("sound-modal").style.display = "none";
   });
 
@@ -213,8 +223,8 @@ window.addEventListener("DOMContentLoaded", () => {
     $("m1").value = "";
     $("s1").value = "";
     $("margin").value = 0;
-    $("rounding").value = "exact"; // ← ここ追加！「そのまま」に戻す
-    $("out").innerHTML = ""; // 計算結果も消す
+    $("rounding").value = "exact";
+    $("out").innerHTML = "";
   });
 
   // レシピ読込
@@ -240,22 +250,35 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
 // レシピ削除モーダル処理
 $("delete").addEventListener("click", () => {
-  const arr = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+  const arrRaw = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+  const arr = arrRaw.map(item =>
+    typeof item === 'string' ? { label: item } : item
+  );
+
   const listBox = $("delete-list");
+  const deleteBtn = $("delete-confirm");
   listBox.innerHTML = "";
+  deleteBtn.disabled = true;
+
   if (!arr.length) {
     listBox.innerHTML = "<p>保存されたレシピはありません。</p>";
   } else {
     arr.forEach((p, i) => {
       const lbl = document.createElement("label");
-      lbl.style.display = "block";
       lbl.innerHTML = `<input type="checkbox" value="${i}"> ${p.label}`;
       listBox.appendChild(lbl);
     });
+
+    listBox.querySelectorAll("input[type=checkbox]").forEach(cb => {
+      cb.addEventListener("change", () => {
+        const checked = listBox.querySelectorAll("input:checked").length > 0;
+        deleteBtn.disabled = !checked;
+      });
+    });
   }
+
   $("delete-modal").style.display = "flex";
 });
 
@@ -277,7 +300,10 @@ $("delete-confirm").addEventListener("click", () => {
 
 // 「はい」で削除
 $("confirm-yes").addEventListener("click", () => {
-  const arr = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+  const arrRaw = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+  const arr = arrRaw.map(item =>
+    typeof item === 'string' ? { label: item } : item
+  );
   const checked = [...$("delete-list").querySelectorAll("input:checked")].map(el => Number(el.value));
   const newArr = arr.filter((_, i) => !checked.includes(i));
   localStorage.setItem(LS_KEY, JSON.stringify(newArr));
@@ -287,7 +313,7 @@ $("confirm-yes").addEventListener("click", () => {
   showToast("削除しました！");
 });
 
-// 「いいえ」で一覧に戻る
+// 「いいえ」で一覧
 $("confirm-no").addEventListener("click", () => {
   $("confirm-modal").style.display = "none";
   $("delete-modal").style.display = "flex";
