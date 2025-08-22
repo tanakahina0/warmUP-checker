@@ -61,6 +61,10 @@ body {
         gap: 20px;
         justify-content: space-between;
 
+          button.secondary {
+            font-family: "Hachi Maru Pop", cursive;
+          }
+
         .range-flex-left {
           max-width: 60%;
           display: flex;
