@@ -48,6 +48,9 @@ body {
   gap: 20px;
   justify-content: space-between;
 }
+.calculation-wrapper .wrap .card .range-flex-wrapper button.secondary {
+  font-family: "Hachi Maru Pop", cursive;
+}
 .calculation-wrapper .wrap .card .range-flex-wrapper .range-flex-left {
   max-width: 60%;
   display: flex;
