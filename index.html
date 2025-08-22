@@ -67,7 +67,7 @@
               </div>
               <button id="delete-label" class="secondary" title="入力内容をクリア">入力内容をクリア</button>
               <div class="recipe-wrapper">
-                <label>保存したレシピ</label>
+                <label>保存したレシピ(20件まで)</label>
                 <div id="presets" class="presets"></div>
               </div>
             </div>
@@ -88,7 +88,7 @@
                   <button id="save" class="secondary" title="レシピを保存">レシピを保存</button>
                   <button id="delete" class="secondary" title="レシピを削除">レシピを削除</button>
                 </div>
-                <p>作り方：t₂ = (分×60 + 秒) × W₁ / W₂。<span class="br"></span>短めで様子見がオススメ！</p>
+                <p>作り方：W₁とW₂、時間を入力して「あたためる」を押してね。<span class="br"></span>端数の処理は短めで様子見がオススメ！</p>
               </div>
             </div>
           </div>
@@ -109,34 +109,46 @@
         <li><img src="./img/food04.png" alt=""></li>
         <li><img src="./img/food05.png" alt=""></li>
         <li><img src="./img/food06.png" alt=""></li>
+        <li><img src="./img/food01.png" alt=""></li>
+        <li><img src="./img/food02.png" alt=""></li>
+        <li><img src="./img/food03.png" alt=""></li>
+        <li><img src="./img/food04.png" alt=""></li>
+        <li><img src="./img/food05.png" alt=""></li>
+        <li><img src="./img/food06.png" alt=""></li>
       </ul> 
     </div>
     <footer>
       <p>サイト内BGM</p>
       <p>[配布元]<a href="https://yukizakura.net" target="_blank">創作堂さくら紅葉</a></p>
     </footer>
-    <div id="save-modal" class="modal" style="display:none;">
-      <div class="modal-content">
+    <div id="save-modal" class="modal">
+      <div class="modal-content save-modal">
         <p>レシピ名を入力してください</p>
-        <input id="save-name" type="text" placeholder="例：500W→700W 4分10秒" style="width:100%;padding:8px;margin:10px 0;">
+        <input id="save-name" type="text" placeholder="例：500W→700W 4分10秒">
         <div>
           <button id="save-confirm">保存</button>
           <button id="save-cancel">キャンセル</button>
         </div>
       </div>
     </div>
-    <!-- レシピ削除モーダル -->
-    <div id="delete-modal" class="modal" style="display:none;">
+
+    <div id="save-limit-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <p>レシピの保存件数が上限に達しています！<br>古いレシピを削除してから保存してください。</p>
+        <button id="save-limit-ok">OK</button>
+      </div>
+    </div>
+
+    <div id="delete-modal" class="modal">
       <div class="modal-content">
         <p>削除するレシピを選んでください</p>
-        <div id="delete-list" class="delete-list" style="max-height:200px;overflow-y:auto;text-align:left;"></div>
+        <div id="delete-list" class="delete-list"></div>
         <button id="delete-confirm">削除</button>
         <button id="delete-cancel">キャンセル</button>
       </div>
     </div>
 
-    <!-- 確認モーダル -->
-    <div id="confirm-modal" class="modal" style="display:none;">
+    <div id="confirm-modal" class="modal">
       <div class="modal-content">
         <p>このレシピを消しても良いですか？</p>
         <button id="confirm-yes">はい</button>
@@ -144,7 +156,10 @@
       </div>
     </div>
 
-    <!-- 削除完了メッセージ -->
+    <div id="save-toast" class="toast">
+      保存しました！
+    </div>
+
     <div id="delete-toast" class="toast">
       削除しました！
     </div>
