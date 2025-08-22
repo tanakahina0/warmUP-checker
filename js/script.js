@@ -287,7 +287,7 @@ $("delete-cancel").addEventListener("click", () => {
   $("delete-modal").style.display = "none";
 });
 
-// 削除ボタン → 確認モーダルへ
+// 削除ボタン→確認モーダルへ
 $("delete-confirm").addEventListener("click", () => {
   const checked = [...$("delete-list").querySelectorAll("input:checked")];
   if (checked.length === 0) {
